@@ -53,7 +53,7 @@ function POSTComponent() {
                 //   url 주소의 body 영역에 담아서 데이터가 노출되지 않도록 전송해준다
             });
 
-            // console.log(response.data);
+            // console.log(response);
 
             if(response.data == "success") {
 

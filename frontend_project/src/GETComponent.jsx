@@ -55,6 +55,10 @@ function GETComponent() {
                             <td>{ item.boardTitle }</td>
                             <td>{ item.boardWriter }</td>
                         </tr>
+                        /*
+                            tr 요소들이 클릭되었을 때
+                            라우팅에 의해 DELETEComponent (상세조회화면) 이 보여야함
+                        */
                     );
                 });
 

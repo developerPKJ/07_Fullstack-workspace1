@@ -6,6 +6,8 @@ import './App.css'
 
 import GETComponent from "./GETComponent";
 import POSTComponent from "./POSTComponent";
+import PUTComponent from "./PUTComponent";
+import DELETEComponent from "./DELETEComponent";
 
 function App() {
   
@@ -136,6 +138,40 @@ function App() {
       </p>
 
       <POSTComponent />
+
+      <br/>
+      <hr/>
+
+      <h3>6. PUT 요청 예제</h3>
+
+      <p>
+        - 기존 데이터를 "수정" 할 때 사용한다. <br/>
+        - method : "put", 전달값은 data 속성에 담는다. <br/>
+        - 또한 URL 주소에 Path Variable 방식으로 수정 대상의 id 도 같이 넘긴다!!
+      </p>
+
+      {/*
+        기존의 수정 기능들은 "무엇을 어떻게 수정할건지" 가 핵심이였음!!
+
+        무엇을? - 누구의 정보를? 몇번째 게시글을? (쿼리문의 where 절) : Path Variable 방식으로 전달
+        어떻게? - 수정할 정보들을 의미 (쿼리문의 set 절) : data 속성에 담아서 전달
+      */}
+
+      <PUTComponent />
+
+      <br/>
+      <hr/>
+
+      <h3>7. DELETE 요청 예제</h3>
+
+      <p>
+        - 기존 데이터를 "삭제" 할 때 사용한다. <br/>
+        - method : "delete", 삭제 시 보통 구구절절 데이터를 넘기진 않는다. <br/>
+        - 단, 뭐를 삭제할건지 id (where 절에 들어갈 PK 내지 UQ) 보통
+          Path Variable 방식으로 전달하긴 한다.
+      </p>
+
+      <DELETEComponent />
 
     </div>
   )

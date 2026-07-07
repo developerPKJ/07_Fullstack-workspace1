@@ -2,10 +2,15 @@ package com.kh.backend.controller;
 
 import java.util.ArrayList;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,12 +35,13 @@ public class APIController {
 	// 즉, http://localhost:8006/backend/boards?cpage=x 에 대한 메소드
 	// @CrossOrigin
 	// @ResponseBody
+	/*
 	@GetMapping("boards")
 	public ArrayList<Board> selectBoardList(@RequestParam(value="cpage", defaultValue="1") int currentPage) {
 		
 		// System.out.println("잘 호출되나?");
 		
-		System.out.println(currentPage);
+		// System.out.println(currentPage);
 		// > 기존의 GET 방식과 기술적인 부분은 모두 동일하다!!
 		//   데이터가 URL 주소의 header 영역에 담겨서 URL 주소 상에 쿼리스트링 형식으로 노출된다는 점도 동일함!!
 		//   또한, 코드 작성 방법도 똑같다!!
@@ -62,8 +68,45 @@ public class APIController {
 		// > Jackson 라이브러리 이용하기
 		return list;
 	}
+	*/
+	
+	@GetMapping("boards")
+	public ResponseEntity<ArrayList<Board>> selectBoardList(
+			@RequestParam(value="cpage", defaultValue="1") int currentPage) {
+		
+		// System.out.println("잘 호출되나?");
+		
+		// System.out.println(currentPage);
+		// > 기존의 GET 방식과 기술적인 부분은 모두 동일하다!!
+		//   데이터가 URL 주소의 header 영역에 담겨서 URL 주소 상에 쿼리스트링 형식으로 노출된다는 점도 동일함!!
+		//   또한, 코드 작성 방법도 똑같다!!
+		// > 단, 의미상 "GET" 데이터를 "가져오겠다, 조회해오겠다" 라는 뜻이 추가된것임!!
+		
+		// Service --> Dao --> mapper (DB) 까지 다녀오면서
+		// 데이터를 "SELECT" 문으로 "조회" 해 와야 한다!!
+		
+		// > DB 로 부터 조회해왔다라는 가정 하에 한 페이지 당 10개의 게시글을 구성해보자
+		ArrayList<Board> list = new ArrayList<>();
+		
+		for(int i = 1; i <= 10; i++) {
+			
+			Board b = new Board();
+			b.setBoardNo(i);
+			b.setBoardTitle(i + "번째 게시글 제목입니다.");
+			b.setBoardContent(i + "번째 게시글 내용입니다.");
+			b.setBoardWriter("user0" + i);
+
+			list.add(b);
+		}
+		
+		// 우리는 이 Board 객체가 10개 들은 list 를 응답데이터로 넘겨야 함!!
+		// > ResponseEntity<ArrayList<Board>> 로 응답 정보를 커스터마이징해서 넘기기
+		return ResponseEntity.status(HttpStatus.OK)
+							 .body(list);
+	}
 	
 	// 게시글 상세조회용 GET 요청에 대한 메소드
+	/*
 	@GetMapping("boards/{boardNo}")
 	public Board selectBoard(@PathVariable int boardNo) {
 		
@@ -80,18 +123,54 @@ public class APIController {
 		
 		return b;
 	}
+	*/
+	
+	@GetMapping("boards/{boardNo}")
+	public ResponseEntity<Board> selectBoard(@PathVariable int boardNo) {
+		
+		// System.out.println("잘 호출되나?");
+		
+		// System.out.println(boardNo);
+		
+		// DB 로 부터 단일행 조회를 해왔다라는 가정 하에
+		Board b = new Board();
+		b.setBoardNo(boardNo);
+		b.setBoardTitle(boardNo + "번째 게시글 제목입니다.");
+		b.setBoardContent(boardNo + "번째 게시글 내용입니다.");
+		b.setBoardWriter("user0" + boardNo);
+		
+		// > ResponseEntity 방식으로 응답정보를 리턴
+		return ResponseEntity.status(HttpStatus.OK)
+							 .body(b);
+	}
 	
 	// POST 요청에 대한 메소드
 	// 즉, http://localhost:8006/backend/boards 에 대한 메소드
 	// @CrossOrigin
 	// > POST 요청 시에는 요청이 들어오는 방향에서 CORS Policy 에 의해 막힘!!
 	// @ResponseBody
+	/*
 	@PostMapping("boards")
 	public String insertBoard(@RequestBody Board b) {
 		
 		// System.out.println("잘 호출되나?");
 		
-		System.out.println(b);
+		// System.out.println(b);
+		
+		// 이 b 라는 Board 객체를 가지고 Service --> Dao --> mapper (DB) 까지 다녀오면 된다!!
+		// > DB 에서 INSERT 구문 실행 후 돌아오면 된다!!
+		
+		// DB INSERT 를 성공했다고 가정
+		return "success";
+	}
+	*/
+	
+	@PostMapping("boards")
+	public ResponseEntity<String> insertBoard(@RequestBody Board b) {
+		
+		// System.out.println("잘 호출되나?");
+		
+		// System.out.println(b);
 		/*
 		 * - 기존의 Spring MVC 방식에서는 요청 시 전달값들의 속성명과 (키값과) VO 의 필드명을 맞춰서 작성하면
 		 *   알아서 전달값들이 뽑힌 뒤, 해당 객체의 각 알맞은 자리의 필드에 자동으로 가공되서 넘어왔었음!!
@@ -110,14 +189,112 @@ public class APIController {
 		// > DB 에서 INSERT 구문 실행 후 돌아오면 된다!!
 		
 		// DB INSERT 를 성공했다고 가정
-		return "success";
+		return ResponseEntity.status(HttpStatus.CREATED)
+							 .body("success");
 	}
 	
+	// PUT 요청에 대한 메소드
+	/*
+	@PutMapping("boards/{boardNo}")
+	public String updateBoard(@PathVariable int boardNo, @RequestBody Board b) {
+		
+		// System.out.println(boardNo);
+		// System.out.println(b);
+		
+		// 글번호는 Path Variable 방식으로, 수정할 데이터는 커맨드 객체 방식으로 받았다면
+		// DB UPDATE 를 하기 위해 boardNo 과 b 를 하나의 객체로 가공해줄 것!!
+		b.setBoardNo(boardNo);
+		// > 이제 b 에는 모든 필요한 데이터가 다 담겨있을 것
+		
+		// 이대로 DB 까지 다녀오면 됨!!
+		
+		// 응답데이터 (메세지) 넘기기
+		return "success";
+	}
+	*/
 	
+	@PutMapping("boards/{boardNo}")
+	public ResponseEntity<String> updateBoard(@PathVariable int boardNo, @RequestBody Board b) {
+		
+		// System.out.println(boardNo);
+		// System.out.println(b);
+		
+		// 글번호는 Path Variable 방식으로, 수정할 데이터는 커맨드 객체 방식으로 받았다면
+		// DB UPDATE 를 하기 위해 boardNo 과 b 를 하나의 객체로 가공해줄 것!!
+		b.setBoardNo(boardNo);
+		// > 이제 b 에는 모든 필요한 데이터가 다 담겨있을 것
+		
+		// 이대로 DB 까지 다녀오면 됨!!
+		
+		// 응답 정보를 넘기기
+		return ResponseEntity.status(HttpStatus.OK)
+							 .body("success");
+	}
 	
+	// DELETE 요청에 대한 메소드
+	/*
+	@DeleteMapping("boards/{boardNo}")
+	public String deleteBoard(@PathVariable int boardNo) {
+		
+		// System.out.println(boardNo);
+		
+		// DB DELETE 했다고 가정
+		
+		// 응답 데이터 (메세지) 보내기
+		return "success";
+	}
+	*/
 	
+	@DeleteMapping("boards/{boardNo}")
+	public ResponseEntity<String> deleteBoard(@PathVariable int boardNo) {
+		
+		// System.out.println(boardNo);
+		
+		// DB DELETE 했다고 가정
+		
+		// 응답 정보 넘겨보기
+		return ResponseEntity.status(HttpStatus.NO_CONTENT)
+							 .body("success");
+	}
 	
-	
+	/*
+	 * * 단, 실무에서는 응답데이터만 딸랑 넘기기 보다는 개발자인 내가 직접 응답 정보를 구성해서 넘겨준다!!
+	 * - 응답 데이터만 딸랑 넘기게 되면, 내부적으로 응답 정보가 자동으로 구성되서 넘어가게 된다!! (axios 의 response 객체) 
+	 * - 이 응답 정보들도 커스터마이징 가능하다.
+	 * 
+	 * * ResponseEntity 객체
+	 * - HTTP 응답 정보를 개발자가 직접 구성 (커스터마이징) 할 수 있는 객체
+	 * - 단순히 데이터만 딸랑 넘기는게 아니라
+	 *   상태코드 (Status Code), 헤더 (Header), 응답데이터 (Body) 등을 직접 설정할 수 있다!!
+	 *   
+	 * [ 표현법 ]
+	 * - 기존의 Jackson 방식
+	 * return 응답데이터;  
+	 * > Jackson 이 응답데이터를 알아서 JSON 으로 변환하여 응답
+	 * > 상태코드나 설정값들이 알아서 기본값으로 넘어가게 됨!! (특히 상태코드는 200으로 넘어가게 됨)
+	 * 
+	 * - ResponseEntity 방식
+	 * 요청을 받아서 처리하는 Controller 메소드의 리턴 타입으로 ResponseEntity 타입으로 잡는다!!
+	 * (즉, ResponseEntity 객체를 리턴하겠다)
+	 * return ResponseEntity.status(HttpStatus.상태코드)
+	 * 						.body(응답데이터);
+	 * > 응답 상태코드, 헤더, 바디 등을 내가 원하는 형태로 메소드 체이닝을 통해 직접 구성할 수 있다.
+	 *
+	 * * 자주 사용하는 상태코드
+	 * 200 OK 					 : 조회/수정 등 성공 (커스터마이징을 안하면 기본값)
+	 * 201 CREATED				 : 등록 성공
+	 * 204 NO_CONTENT			 : 삭제 성공 (오히려 데이터가 없다는 것은 삭제에 성공했다라는 뜻)
+	 * > 굳이 200, 201, 204 로 안나누고 200 으로 퉁쳐서 "성공임" 만 표현해도 된다!!
+	 *   (무슨 코드든 간에 2로 시작하면 무조건 성공을 뜻한다)
+	 * 400 BAD_REQUEST  		 : 잘못된 요청 (NumberFormatException 의 상황)
+	 * 404 NOT_FOUND			 : 조회 대상 없음 (요청을 받아줄 메소드나 찾는 파일 등이 없을 경우)
+	 * 405 METHOD_NOT_ALLOWED	 : 요청 전송 방식이 맞아 떨어지지 않을 경우
+	 * 500 INTERNAL_SERVER_ERROR : 서버 내부 오류 (서버쪽 코드는 Java 로 작성하므로, Java 문법 오류)
+	 * > 2가 아닌 다른 숫자로 시작하면 모두 에러를 뜻한다
+	 * 
+	 * - 단순 예제에서는 객체를 응답데이터로 바로 return 해도 충분하지만,
+	 *   실무에서는 응답 상태코드나 헤더 등을 제어해야 하는 경우가 많다!!
+	 */
 	
 	
 	
