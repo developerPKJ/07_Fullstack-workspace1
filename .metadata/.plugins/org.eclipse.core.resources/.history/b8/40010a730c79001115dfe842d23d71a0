@@ -1,0 +1,95 @@
+package com.kh.backend.controller;
+
+import java.util.ArrayList;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.kh.backend.model.vo.Board;
+
+@Controller
+public class APIController {
+
+	// GET 요청에 대한 메소드
+	// 즉, http://localhost:8006/backend/boards?cpage=x 에 대한 메소드
+	@CrossOrigin
+	@ResponseBody
+	@GetMapping("boards")
+	public ArrayList<Board> selectBoardList(@RequestParam(value="cpage", defaultValue="1") int currentPage) {
+		
+		// System.out.println("잘 호출되나?");
+		
+		System.out.println(currentPage);
+		// > 기존의 GET 방식과 기술적인 부분은 모두 동일하다!!
+		//   데이터가 URL 주소의 header 영역에 담겨서 URL 주소 상에 쿼리스트링 형식으로 노출된다는 점도 동일함!!
+		//   또한, 코드 작성 방법도 똑같다!!
+		// > 단, 의미상 "GET" 데이터를 "가져오겠다, 조회해오겠다" 라는 뜻이 추가된것임!!
+		
+		// Service --> Dao --> mapper (DB) 까지 다녀오면서
+		// 데이터를 "SELECT" 문으로 "조회" 해 와야 한다!!
+		
+		// > DB 로 부터 조회해왔다라는 가정 하에 한 페이지 당 10개의 게시글을 구성해보자
+		ArrayList<Board> list = new ArrayList<>();
+		
+		for(int i = 1; i <= 10; i++) {
+			
+			Board b = new Board();
+			b.setBoardNo(i);
+			b.setBoardTitle(i + "번째 게시글 제목입니다.");
+			b.setBoardContent(i + "번째 게시글 내용입니다.");
+			b.setBoardWriter("user0" + i);
+
+			list.add(b);
+		}
+		
+		// 우리는 이 Board 객체가 10개 들은 list 를 응답데이터로 넘겨야 함!!
+		// > Jackson 라이브러리 이용하기
+		return list;
+	}
+	
+	// POST 요청에 대한 메소드
+	// 즉, http://localhost:8006/backend/boards 에 대한 메소드
+	@CrossOrigin
+	// > POST 요청 시에는 요청이 들어오는 방향에서 CORS Policy 에 의해 막힘!!
+	@ResponseBody
+	@PostMapping("boards")
+	public String insertBoard(@RequestBody Board b) {
+		
+		// System.out.println("잘 호출되나?");
+		
+		System.out.println(b);
+		/*
+		 * - 기존의 Spring MVC 방식에서는 요청 시 전달값들의 속성명과 (키값과) VO 의 필드명을 맞춰서 작성하면
+		 *   알아서 전달값들이 뽑힌 뒤, 해당 객체의 각 알맞은 자리의 필드에 자동으로 가공되서 넘어왔었음!!
+		 *   (커맨드 객체 방식)
+		 * - React + Axios 에서는 JSON 형태로 데이터를 넘겨주는 방식이기 때문에 바로 커맨드 객체 방식으로는 못받아오고,
+		 *   JSON 형태로 요청시 전달값을 넘겨준 것을 자바의 VO 객체 형식으로 별도로 변환해야 한다!!
+		 *   (각 필드값들이 null 로 제대로 넘어오지 않음)
+		 * 
+		 * 해결방법)
+		 * - 매개변수 VO 객체 앞에 @RequestBody 어노테이션을 추가하면 된다.
+		 * - @RequestBody 어노테이션은 쉽게 말해서 URL 주소의 Body 영역으로부터 데이터를 꺼내오겠다. 의 뜻임!!
+		 *   (URL 주소의 Body 영역에 담긴 JSON 형식의 요청 시 전달값을 뽑아서 VO 로 가공해주겠다)
+		 */
+		
+		// 이 b 라는 Board 객체를 가지고 Service --> Dao --> mapper (DB) 까지 다녀오면 된다!!
+		// > DB 에서 INSERT 구문 실행 후 돌아오면 된다!!
+		
+		// DB INSERT 를 성공했다고 가정
+		return "success";
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

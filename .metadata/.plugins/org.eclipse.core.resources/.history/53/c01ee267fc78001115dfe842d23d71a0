@@ -1,0 +1,5 @@
+package com.kh.backend.controller;
+
+public class APIController {
+
+}

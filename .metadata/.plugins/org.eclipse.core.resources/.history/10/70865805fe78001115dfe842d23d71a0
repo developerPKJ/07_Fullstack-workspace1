@@ -1,0 +1,27 @@
+package com.kh.backend.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+public class APIController {
+
+	// GET 요청에 대한 메소드
+	// 즉, http://localhost:8006/backend/boards?cpage=x 에 대한 메소드
+	@GetMapping("boards")
+	public void selectBoardList(@RequestParam(value="cpage", defaultValue="1") int currentPage) {
+		
+		// System.out.println("잘 호출되나?");
+		
+		System.out.println(currentPage);
+		// > 기존의 GET 방식과 기술적인 부분은 모두 동일하다!!
+		//   데이터가 URL 주소의 header 영역에 담겨서 URL 주소 상에 쿼리스트링 형식으로 노출된다는 점도 동일함!!
+		//   또한, 코드 작성 방법도 똑같다!!
+		// > 단, 의미상 "GET" 데이터를 "가져오겠다, 조회해오겠다" 라는 뜻이 추가된것임!!
+		
+		
+		
+	}
+	
+}
